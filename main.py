@@ -1,4 +1,8 @@
 import os
+from shutil import which
+
+def is_tool(name):
+    return which(name) is not None
 
 def generate_key(passphrase):
     pass
@@ -19,9 +23,13 @@ def decrypt(file, key, out_file):
 
 def main():
 
+    if not is_tool("openssl"):
+        print("Install openssl to continue")
+        exit()
+
     while True:
         print()
-        selector = input("1) Load Key \n2) Generate Key \n3) Exit")
+        selector = input("1) Load Key \n2) Generate Key \n3) Exit\n")
 
         if selector == "1":
             key = load_key()
