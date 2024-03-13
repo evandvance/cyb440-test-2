@@ -1,6 +1,7 @@
 import subprocess
 from shutil import which
 
+
 def is_tool(name:str) -> bool:
     """A function to check if a command line tool is installed
 
@@ -11,6 +12,7 @@ def is_tool(name:str) -> bool:
         bool: If the command line tool is installed the function returns True.
     """
     return which(name) is not None
+
 
 def run_command(command:list[str]) -> str:
     """Run a command in the shell environment
@@ -32,6 +34,7 @@ def run_command(command:list[str]) -> str:
 
     return output.stdout.decode("utf-8").strip()
 
+
 def generate_key(passphrase:str) -> str:
     """This function generates a hexkey with some automatically generated salt. 
 
@@ -46,6 +49,7 @@ def generate_key(passphrase:str) -> str:
     print(salt)
     return run_command(["openssl", "kdf", "-keylen", "32", "-kdfopt", f"hexsalt:{salt}", "-kdfopt", f"pass:{passphrase}", "-kdfopt", "n:65536", "-kdfopt", "r:8", "-kdfopt", "p:1", "SCRYPT"])
 
+
 def save_key(key:str) -> None:
     """Writes a string to a ./KEY.text but it is used in this program specifically for writing the hexkey
 
@@ -54,6 +58,7 @@ def save_key(key:str) -> None:
     """
     with open("./KEY.txt", "w") as key_file:
         key_file.write(key)
+
 
 def load_key() -> str:
     """A function to load a hexkey from ./KEY.txt.
@@ -64,6 +69,9 @@ def load_key() -> str:
     with open("./KEY.txt") as key_file:
         return key_file.read()
 
+#TODO ADD support for hashing files and creating MACs
+
+
 def encrypt(input_file:str, output_file:str, key:str) -> None:
     """Encrypts a file using aes-256-cbc and a key
 
@@ -73,6 +81,7 @@ def encrypt(input_file:str, output_file:str, key:str) -> None:
         key (str): Key for encryption
     """
     run_command(["openssl", "enc", "-aes-256-cbc", "-pbkdf2", "-pass", f"pass:{key}", "-in", input_file, "-out", output_file])
+
 
 def decrypt_file(input_file:str, output_file:str, key:str) -> None:
     """Decrypts a file that has been encrypted with aes-256-cbc
@@ -145,6 +154,7 @@ def main():
             exit()
         else:
             print("\nBad Input")
+
 
 if __name__ == "__main__":
     main()
