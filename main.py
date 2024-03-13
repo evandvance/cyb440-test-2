@@ -26,7 +26,6 @@ def run_command(command:list[str]) -> str:
     Returns:
         str: The commands command line output
     """
-    print(command)
     output = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
     if output.returncode != 0:
@@ -36,7 +35,7 @@ def run_command(command:list[str]) -> str:
 
 
 def generate_key(passphrase:str) -> str:
-    """This function generates a hexkey with some automatically generated salt. 
+    """This function generates a hexkey with some automatically generated salt using the SCRYPT alogrithmn. 
 
 
     Args:
@@ -46,7 +45,6 @@ def generate_key(passphrase:str) -> str:
         str: The hexkey
     """
     salt = run_command(["openssl", "rand", "-hex", "16"])
-    print(salt)
     return run_command(["openssl", "kdf", "-keylen", "32", "-kdfopt", f"hexsalt:{salt}", "-kdfopt", f"pass:{passphrase}", "-kdfopt", "n:65536", "-kdfopt", "r:8", "-kdfopt", "p:1", "SCRYPT"])
 
 
