@@ -16,6 +16,8 @@ Create an explination of the advantages/disadvanteges of symmetric encryption
 Provide an explanation of what bit-level you plan to utilize within your solution
 and why it is the recommended NIST level. Provide insite into the minimum recommended bit-levels.
 
+`Explination here`
+
 ### Task 3
 
 Create a way to create a 256-bit or 32-byte key from a passphrase for encryption. Use the password "cryptogrophy"
@@ -40,3 +42,9 @@ Clone this repo then run:
 `python3 main.py`
 
 The terminal will walk you through all your processes and tell what has occured.
+
+## Things to Note
+
+- This program saves your key to KEY.txt and that is the key that would be shared.
+- New keys are generated from the same passphrase each time since the salt is random.
+- I think I am using pbkdf2 with a pbkdf since that is what is happening in the generate_key function.

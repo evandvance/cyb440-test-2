@@ -46,6 +46,8 @@ def generate_key(passphrase:str) -> str:
     Returns:
         str: The hexkey
     """
+
+    #IMPORTANT!!! Since the salt is different each time, a different key will be generated with the same passphrase (this is good)
     salt = run_command(["openssl", "rand", "-hex", "16"])
     return run_command(["openssl", "kdf", "-keylen", "32", "-kdfopt", f"hexsalt:{salt}", "-kdfopt", f"pass:{passphrase}", "-kdfopt", "n:65536", "-kdfopt", "r:8", "-kdfopt", "p:1", "SCRYPT"])
 
@@ -69,12 +71,60 @@ def load_key() -> str:
     with open("./KEY.txt") as key_file:
         return key_file.read()
 
-#TODO ADD support for creating MACs
+def hmac_file(file:str, key:str) -> str:
+    """A function to generate a SHA256 HMAC for a file using a key
 
-def hash_file(file:str):
+    Args:
+        file (str): Path to file 1 
+        key (str): The key used for the HMAC
+
+    Returns:
+        str: The resulting HMAC value
+    """
+    return run_command(["openssl", "dgst", "-sha256", "-hmac", key, file]).split("=")[-1].strip()
+
+def write_hmac(file1:str, file2:str, key:str) -> None:
+    """A Function to write two files HMACs to a file using a key
+
+    Args:
+        file1 (str): Path to file 1
+        file2 (str): Path to file 2
+        key (_type_): The key used for the HMAC
+    """
+
+    file1_hmac = hmac_file(file1, key)
+    file2_hmac = hmac_file(file2, key)
+
+    if file1_hmac != file2_hmac:
+        print(f"{file1} is not the same file as {file2}")
+        return
+
+    message = f"{file1}'s hash {file1_hmac} == {file2}'s hash {file2_hmac} with key {key}"
+
+    with open(f"./files/hmacs/{file1.replace("./files/plaintext/","")}_{file2.replace("./files/decrypted/","")}.hash", "w") as file:
+        file.write(message)
+
+    print(message)
+
+def hash_file(file:str) -> str:
+    """A function to hash a file using SHA256
+
+    Args:
+        file (str): Path to file being hashed
+
+    Returns:
+        str: The resulting SHA256 Value from the hash
+    """
     return run_command(["openssl", "dgst", "-sha256", file]).split("=")[-1].strip()
 
-def write_hashes(file1:str, file2:str):
+def write_hashes(file1:str, file2:str) -> None:
+    """A function to write two files hashes to a third file
+
+    Args:
+        file1 (str): Path to file 1
+        file2 (str): Path to file 2
+    """
+
     file1_hash = hash_file(file1)
     file2_hash = hash_file(file2)
 
@@ -82,8 +132,12 @@ def write_hashes(file1:str, file2:str):
         print(f"{file1} is not the same file as {file2}")
         return
 
+    message = f"{file1}'s hash {file1_hash} == {file2}'s hash {file2_hash}"
+
     with open(f"./files/hashes/{file1.replace("./files/plaintext/","")}_{file2.replace("./files/decrypted/","")}.hash", "w") as file:
-        file.write(f"{file1}'s hash {file1_hash} == {file2}'s hash {file2_hash}")
+        file.write(message)
+
+    print(message)
 
 def encrypt_file(input_file:str, output_file:str, key:str) -> None:
     """Encrypts a file using aes-256-cbc and a key
@@ -108,9 +162,11 @@ def decrypt_file(input_file:str, output_file:str, key:str) -> None:
     run_command(["openssl", "enc", "-d", "-aes-256-cbc", "-pbkdf2", "-pass", f"pass:{key}", "-in", input_file, "-out", output_file])
     print(f"\nThe file: {input_file} has been decrypted at destination {output_file} with the key {key}")
 
+    write_hmac(f"./files/plaintext/{output_file.replace("./files/decrypted/","")}", output_file, key)
     try:
         write_hashes(f"./files/plaintext/{output_file.replace("./files/decrypted/","")}", output_file)
     except RuntimeError:
+        print("uhoh")
         return
 
 
@@ -159,6 +215,7 @@ def main():
 
             key = generate_key(passphrase or MASTERPASSWORD)
 
+            #I am sure in the real world this is moderately insecure
             print(f"Your key is {key}")
 
             save = input("Would you like to save it? (y/n)")
