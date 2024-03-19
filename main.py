@@ -108,7 +108,10 @@ def decrypt_file(input_file:str, output_file:str, key:str) -> None:
     run_command(["openssl", "enc", "-d", "-aes-256-cbc", "-pbkdf2", "-pass", f"pass:{key}", "-in", input_file, "-out", output_file])
     print(f"\nThe file: {input_file} has been decrypted at destination {output_file} with the key {key}")
 
-    write_hashes(f"./files/plaintext/{output_file.replace("./files/decrypted/","")}", output_file)
+    try:
+        write_hashes(f"./files/plaintext/{output_file.replace("./files/decrypted/","")}", output_file)
+    except RuntimeError:
+        return
 
 
 
@@ -180,9 +183,9 @@ def main():
                 encrypt_all(key)
             else:
                 path = f"./files/plaintext/{filename}"
-                out_path = f"./files/encrypted/{filename}.enc"
+                out_path = f"./files/encrypted/{filename.replace(".txt",".enc")}"
 
-                encrypt_file(path, key, out_path)
+                encrypt_file(path, out_path, key)
 
 
         elif selector == "2":
@@ -194,7 +197,7 @@ def main():
 
             else:
                 path = f"./files/encrypted/{filename}"
-                out_path = f"./files/decrypted/{filename}.txt"
+                out_path = f"./files/decrypted/{filename.replace(".enc",".txt")}"
 
                 decrypt_file(path, key, out_path)
 
