@@ -69,8 +69,21 @@ def load_key() -> str:
     with open("./KEY.txt") as key_file:
         return key_file.read()
 
-#TODO ADD support for hashing files and creating MACs
+#TODO ADD support for creating MACs
 
+def hash_file(file:str):
+    return run_command(["openssl", "dgst", "-sha256", file]).split("=")[-1].strip()
+
+def write_hashes(file1:str, file2:str):
+    file1_hash = hash_file(file1)
+    file2_hash = hash_file(file2)
+
+    if file1_hash != file2_hash:
+        print(f"{file1} is not the same file as {file2}")
+        return
+
+    with open(f"./files/hashes/{file1.replace("./files/plaintext/","")}_{file2.replace("./files/decrypted/","")}.hash", "w") as file:
+        file.write(f"{file1}'s hash {file1_hash} == {file2}'s hash {file2_hash}")
 
 def encrypt_file(input_file:str, output_file:str, key:str) -> None:
     """Encrypts a file using aes-256-cbc and a key
@@ -95,6 +108,8 @@ def decrypt_file(input_file:str, output_file:str, key:str) -> None:
     run_command(["openssl", "enc", "-d", "-aes-256-cbc", "-pbkdf2", "-pass", f"pass:{key}", "-in", input_file, "-out", output_file])
     print(f"\nThe file: {input_file} has been decrypted at destination {output_file} with the key {key}")
 
+    write_hashes(f"./files/plaintext/{output_file.replace("./files/decrypted/","")}", output_file)
+
 
 
 def encrypt_all(key:str) -> None:
@@ -106,7 +121,7 @@ def encrypt_all(key:str) -> None:
     files = [file for file in glob.glob("./files/plaintext/*.txt")]
 
     for file in files:
-        encrypt_file(file, f"./files/encrypted/{file.replace("./files/plaintext/","")}",key)
+        encrypt_file(file, f"./files/encrypted/{file.replace("./files/plaintext/","").replace(".txt",".enc")}",key)
 
 
 def decrypt_all(key:str) -> None:
@@ -115,10 +130,10 @@ def decrypt_all(key:str) -> None:
     Args:
         key (str): The key used to encrypt the files
     """
-    files = [file for file in glob.glob("./files/encrypted/*.txt")]
+    files = [file for file in glob.glob("./files/encrypted/*.enc")]
 
     for file in files:
-        decrypt_file(file, f"./files/decrypted/{file.replace("./files/encrypted/","")}", key)
+        decrypt_file(file, f"./files/decrypted/{file.replace("./files/encrypted/","").replace(".enc",".txt")}", key)
 
 
 def main():
