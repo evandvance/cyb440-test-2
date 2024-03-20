@@ -12,7 +12,9 @@ Create an explination of the advantages/disadvanteges of symmetric encryption
 `Symmetric encryption allows for fast encryption. It is best used for 'in place' encryption. That is
 encryption where the files dont need to be passed around. However, symmetric encryption requires the same
 key for both encryption and decryption. This means that anyone encrypting and decrypting needs access to
-the same key. Key security is paramount to the successful used of symmetric encryption.`
+the same key. Key security is paramount to the successful use of symmetric encryption.`
+
+Really for the scenario presented in the assignment, asymmetric encryption seems better.
 
 ### Task 2
 
@@ -31,7 +33,7 @@ Create a way to create a 256-bit or 32-byte key from a passphrase for encryption
 
 ### Task 4
 
-Create a way to encrypt and decrypt files to protext confidentiality.
+Create a way to encrypt and decrypt files to protect confidentiality.
 
 ### Task 5
 
@@ -42,7 +44,7 @@ Create a method for the user to create a MAC/HMAC for each file before encryptio
 Create a solution that will allow the users to exchange messages or files but also include a MAC to provide an
 extra layer of confidence in the authenticity of the file. Use the password "cryptography"
 
-## How to Use this Code
+## How to Run this Code
 
 Clone this repo then run:
 
@@ -55,3 +57,4 @@ The terminal will walk you through all your processes and tell what has occured.
 - This program saves your key to KEY.txt and that is the key that would be shared.
 - New keys are generated from the same passphrase each time since the salt is random.
 - I think I am using pbkdf2 with a pbkdf since that is what is happening in the generate_key function.
+- Hashes and HMACs are automated on decryption and written to a file in the files/hmacs or files/hashes folder.
