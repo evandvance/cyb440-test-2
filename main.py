@@ -36,8 +36,10 @@ def run_command(command:list[str]) -> str:
     return output.stdout.decode("utf-8").strip()
 
 
+#TASK 3
 def generate_key(passphrase:str) -> str:
-    """This function generates a hexkey with some automatically generated salt using the SCRYPT alogrithmn. 
+    """This function generates a hexkey with some automatically generated salt using the SCRYPT alogrithmn.
+       The key length produced is 32 bytes or 256 bits.
 
 
     Args:
@@ -71,6 +73,8 @@ def load_key() -> str:
     with open("./KEY.txt") as key_file:
         return key_file.read()
 
+
+#TASK 6
 def hmac_file(file:str, key:str) -> str:
     """A function to generate a SHA256 HMAC for a file using a key
 
@@ -82,6 +86,7 @@ def hmac_file(file:str, key:str) -> str:
         str: The resulting HMAC value
     """
     return run_command(["openssl", "dgst", "-sha256", "-hmac", key, file]).split("=")[-1].strip()
+
 
 def write_hmac(file1:str, file2:str, key:str) -> None:
     """A Function to write two files HMACs to a file using a key
@@ -106,6 +111,8 @@ def write_hmac(file1:str, file2:str, key:str) -> None:
 
     print(message)
 
+
+#TASK 5
 def hash_file(file:str) -> str:
     """A function to hash a file using SHA256
 
@@ -116,6 +123,7 @@ def hash_file(file:str) -> str:
         str: The resulting SHA256 Value from the hash
     """
     return run_command(["openssl", "dgst", "-sha256", file]).split("=")[-1].strip()
+
 
 def write_hashes(file1:str, file2:str) -> None:
     """A function to write two files hashes to a third file
@@ -139,6 +147,8 @@ def write_hashes(file1:str, file2:str) -> None:
 
     print(message)
 
+
+#TASK 4
 def encrypt_file(input_file:str, output_file:str, key:str) -> None:
     """Encrypts a file using aes-256-cbc and a key
 
@@ -151,6 +161,7 @@ def encrypt_file(input_file:str, output_file:str, key:str) -> None:
     print(f"\nThe file: {input_file} has been encrypted at destination {output_file} with the key {key}")
 
 
+#TASK 4
 def decrypt_file(input_file:str, output_file:str, key:str) -> None:
     """Decrypts a file that has been encrypted with aes-256-cbc
 
@@ -168,7 +179,6 @@ def decrypt_file(input_file:str, output_file:str, key:str) -> None:
     except RuntimeError:
         print("uhoh")
         return
-
 
 
 def encrypt_all(key:str) -> None:

@@ -9,18 +9,25 @@ the SPR24 CYB440 Test 2
 
 Create an explination of the advantages/disadvanteges of symmetric encryption
 
-`Explination Here`
+`Symmetric encryption allows for fast encryption. It is best used for 'in place' encryption. That is
+encryption where the files dont need to be passed around. However, symmetric encryption requires the same
+key for both encryption and decryption. This means that anyone encrypting and decrypting needs access to
+the same key. Key security is paramount to the successful used of symmetric encryption.`
 
 ### Task 2
 
 Provide an explanation of what bit-level you plan to utilize within your solution
 and why it is the recommended NIST level. Provide insite into the minimum recommended bit-levels.
 
-`Explination here`
+`This program implements a 256 bit key. This length is used since it is far past the NIST recommended
+length of bits (128). This allows for some future development to occur before a change must be made for
+the sake of security. This length is recommended because of the ammount of time it would take to
+brute force the key. It would take so long, it is infeasable for the encryption to be cracked with
+our modern computing abilities.`
 
 ### Task 3
 
-Create a way to create a 256-bit or 32-byte key from a passphrase for encryption. Use the password "cryptogrophy"
+Create a way to create a 256-bit or 32-byte key from a passphrase for encryption. Use the password "cryptography"
 
 ### Task 4
 
